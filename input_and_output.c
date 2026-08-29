@@ -1,5 +1,13 @@
+/**
+ * @file input_and_output.c
+ * @brief A file containing all user interactions.
+ * @author Pshanichnaya Sofia
+ * @date 2026-08-28
+ */
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
+#include <TXLib.h>
 
 #include "input_and_output.h"
 #include "solving.h"
@@ -45,8 +53,8 @@ void design_output(int amount_of_stars)
 
 void data_input(double* a, double* b, double* c)
 {
+    printf("Enter a, b, c:\n");
     int y = 0;
-    bufer_cleaning();
     while ( (y = scanf("%lg %lg %lg", a, b, c)) != 3 || (getchar() != '\n'))
     {
         int ch = 0;
@@ -54,7 +62,8 @@ void data_input(double* a, double* b, double* c)
         if (ch != '\n')
         {
             printf("Error. Enter again\n");
-            bufer_cleaning();
+            txSpeak("Error. Enter again", 5000);
+            buffer_cleaning();
         }
         else
             break;
@@ -63,38 +72,77 @@ void data_input(double* a, double* b, double* c)
 
 bool ask_user_if_wanna_solve()
 {
-    printf("Do you want to solve a quadratic equation?\n");
-    printf("Enter yes or no: ");
-    int input = getchar();
-    input = tolower(input);
-    if (input == 'y')
+    delayed_output("Do you REALLY want to solve a quadratic equation????\n"
+                   "Enter yes or no: ", TIME_DELAY);
+
+    char input[10] = "";
+    char* p = input;
+    int c = 0;
+    while ((c = getchar()) != '\n' && c != EOF)
     {
-        printf("Today we'll serve quadratic equation type y(x)=ax^2+bx+c :)\n"
-               "Enter a, b, c\n");
+        c = tolower(c);
+        *(p++) = (char)c;
+    }
+    *p = '\0';
+
+    if (!strcmp(input, "yes"))
+    {
+        delayed_output("Today we'll serve quadratic equation type y(x)=ax^2+bx+c :)\n\n", 
+                        TIME_DELAY);
         return true;
     }
-    else
+    else if (strcmp("no", input))
+    {
+        txSpeak("You entered kakuyu-to xrennn) You will be punished, you stupid!", 10000);
+        delayed_output(PINK_ON_BLACK "You entered kakuyu-to xrennn) You will be punished, you stupid!\n" 
+                       RESET_BACKGROUND_TEXT, TIME_DELAY);
+        
         return false;
+    }
+    else
+    {
+        delayed_output("))))OK.\n", TIME_DELAY);
+        return false;
+    }
 }
 
-void triangle(char ALPHA)
+void delayed_output(const char* p, int time_delay)
 {
-    int lines = ALPHA - 'A' + 1;
-    int i, j, k, z;
-    for (i = 1; i <= lines; i++)
+    while(*p != '\0')
     {
-        for (j = 0; j <= ALPHA - 'A' + 1 - i; j++)
-            printf(" ");
-        for (k = 0; k < i - 1; k++)
-            printf("%c", 'A' + k);
-        for (z = i - 1; z < i, z >= 0; z--)
-            printf("%c", 'A' + z);
-        for (j = 0; j <= ALPHA - 'A' + 1 - i; j++)
-            printf("  ");
-        for (k = 0; k < i - 1; k++)
-            printf("%c", 'A' + k);
-        for (z = i - 1; z < i, z >= 0; z--)
-            printf("%c", 'A' + z);
-        printf("\n");
+        printf("%c", *(p++));
+        txSleep(time_delay);
     }
+}
+
+bool ask_user_if_wanna_plot(void)
+{
+    delayed_output("Do you want to plot a polynomial?\n"
+                   "Enter yes or no: ", TIME_DELAY);
+    
+    char input[10] = "";
+    char* p = input;
+    int c = 0;
+    while ((c = getchar()) != '\n' && c != EOF)
+    {
+        c = tolower(c);
+        *(p++) = (char)c;
+    }
+    *p = '\0';
+
+    if (!strcmp(input, "yes"))
+        return true;
+    else
+    {
+        txSpeak("OK", 1000);
+        delayed_output("OK.\n", TIME_DELAY);
+        return false;
+    }
+}
+
+void time_determination()
+{
+    time_t beginning_time = 0;
+    time(&beginning_time);
+    printf("%s", ctime(&beginning_time));
 }
