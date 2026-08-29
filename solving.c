@@ -1,15 +1,16 @@
+/**
+ * @file solving.c
+ * @brief  File containing solver functions.
+ * @author Pshanichnaya Sofia
+ * @date 2026-08-28
+ */
 #include <math.h>
 #include <assert.h>
 #include <stdio.h>
+#include <TXLib.h>
 
-enum amount_real_roots_enum
-{
-    two_roots = 2,
-    one_root = 1,
-    no_roots = 0,
-    infinity_roots = -1
-};
 #include "solving.h"
+#include "input_and_output.h"
 
 int solving_quadratic(double a, double b, double c, double* x1, double* x2)
 {
@@ -60,14 +61,11 @@ int solving_linear(double a, double b, double* x1)
     else if (compare_doubles(b, 0.0))
         return infinity_roots;
     else
-    {
-        *x1 = NAN;
         return no_roots;
-    }
 }
 
-void bufer_cleaning(void)
+void buffer_cleaning(void)
 {
     int ch = 0;
-    while ((ch = getchar()) != '\n' && ch != EOF);
+    while ((ch = getchar()) != '\n' && ch != EOF) {;}
 }
